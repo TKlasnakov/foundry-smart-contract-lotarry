@@ -15,10 +15,12 @@ contract HelperConfig is Script {
         uint32 callbackGasLimit;
     }
 
-    NetworkConfig activeNetworkConfig;
+    NetworkConfig public activeNetworkConfig;
+
+    uint256 private constant SEPOLIA_ADDRESS = 11155111;
 
     constructor() {
-        if (block.chainid == 11155111) {
+        if (block.chainid == SEPOLIA_ADDRESS) {
             activeNetworkConfig = getSepoliaEthConfig();
         } else {
             activeNetworkConfig = getOrCreateAnvilEthConfig();
@@ -37,12 +39,8 @@ contract HelperConfig is Script {
             });
     }
 
-    function getOrCreateAnvilEthConfig()
-        public
-        view
-        returns (NetworkConfig memory)
-    {
-        if (activeNetworkConfig != address(0)) {
+    function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory) {
+        if (activeNetworkConfig.vrfCoordinator != address(0)) {
             return activeNetworkConfig;
         }
 
